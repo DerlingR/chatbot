@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot de Opiniones</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 60%;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .chatbox {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chatbox input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        .chatbox button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .chatbox button:hover {
+            background-color: #45a049;
+        }
+
+        .chat-log {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9e9e9;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .chat-log p {
+            margin: 5px 0;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chatbot de Opiniones</h1>
+        <div class="chatbox">
+            <div class="chat-log" id="chat-log"></div>
+            <input type="text" id="opinion" placeholder="Escribe tu opinión..." />
+            <button onclick="enviarOpinion()">Enviar</button>
+        </div>
+    </div>
+
+    <!-- Pie de página con la firma -->
+    <div class="footer">
+        <p>Participante: Derling Rojas | Matrícula: 100043606 | Ingeniería en Software UAPA</p>
+    </div>
+
+    <script>
+        async function enviarOpinion() {
+            const opinion = document.getElementById('opinion').value;
+            if (opinion.trim() === '') return;
+
+            // Mostrar la opinión en la interfaz
+            const chatLog = document.getElementById('chat-log');
+            chatLog.innerHTML += `<p><strong>Tú:</strong> ${opinion}</p>`;
+
+            // Llamada a la API
+            const response = await fetch('http://127.0.0.1:5000/predecir', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ opinion })
+            });
+
+            const data = await response.json();
+            const sentimiento = data.sentimiento === 1 ? 'Positiva' : 'Negativa';
+
+            // Mostrar la respuesta del chatbot
+            chatLog.innerHTML += `<p><strong>Chatbot:</strong> Sentimiento detectado: ${sentimiento}</p>`;
+
+            // Limpiar el campo de entrada
+            document.getElementById('opinion').value = '';
+        }
+    </script>
+</body>
+</html>
